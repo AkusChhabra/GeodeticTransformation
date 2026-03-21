@@ -4,6 +4,7 @@
 #   Tailored towards Australia's method of displaying coordinates in easting-northing
 
 import numpy as np
+from newton_raphson import *
 
 ### Inputs
 
@@ -18,10 +19,10 @@ f = 1/298.25 # 1/f [Reciprocal of Flattening]
 
 
 ## TM Definition
-E0 = 200000 # metres [false_easting]
-N0 = 4510193.494 # metres [false_northing]
+E0 = 500000 # metres [false_easting] #500000 # 200000
+N0 = 10000000 # metres [false_northing] #10000000 # 4510193.494
 m0 = 1.000086 # [central meridian scale factor]
-zone_width = 2 # degrees
+zone_width = 3 # degrees
 Long_central_meridian_zone_1 = 149.00929483056 # degrees
 
 b = a/(1-f) # [Semi-minor axis]
@@ -31,8 +32,8 @@ epsilon_sqr = f*(2-f)
 n = f/(2-f)
 
 
-A = (a/(1+n))*((n**2)*((n**2)*((n**2)*(25*n**2 + 64) + 256) + 16384))/16384
-
+#A = (a/(1+n))*((n**2)*((n**2)*((n**2)*(25*n**2 + 64) + 256) + 16384))/16384
+A = (a/(1+n))*(1 + (1/4)*n**2 + (1/64)*n**4 + (1/256)*n**6 + (25/16384)*n**8)
 
 ## Alpha Coefficients
 
@@ -86,9 +87,8 @@ beta = [beta_2, beta_4, beta_6, beta_8, beta_10, beta_12, beta_14, beta_16]
 
 ## Compute Transverse Mercator X, Y coordinates
 
-X = (E - E0)/m0
-Y = (N - N0)/m0
-
+X = (E - E0)/m0 # East coordinate
+Y = (N - N0)/m0 # North coordinate
 
 ## Transverse Mercator (TM) ratios zeta and eta
 
@@ -100,10 +100,26 @@ eta = X/A
 zeta_prime = zeta
 eta_prime = eta
 
-for k in range(0, N):
-    zeta_prime += beta[k]*np.sin(2*k)*np.cosh(2*k*eta)
-    eta_prime += beta[k]*np.cos(2*k)*np.sinh(2*k*eta)
+for k in range(0, 8):
+    zeta_prime += beta[k]*np.sin(2*k*zeta)*np.cosh(2*k*eta)
+    eta_prime += beta[k]*np.cos(2*k*zeta)*np.sinh(2*k*eta)
 
-## t' = tan(phi')
+
+## Compute t' = tan(phi')
 
 t_prime = np.sin(zeta_prime)/(np.sqrt(np.sinh(eta_prime)**2 + np.cos(zeta_prime)**2))
+
+newton_raphson(f, df, t_prime)
+
+
+print(f"\nRectifying Radius, A: ", A)
+print(f"Semi-Minor Axis, b: ", b)
+print(f"eccentricity squared: ", epsilon_sqr)
+print(f"n: ", n)
+print(f"X: ", X)
+print(f"Y: ", Y)
+print(f"zeta: ", zeta)
+print(f"eta: ", eta)
+print(f"zeta_prime: ", zeta_prime)
+print(f"eta_prime: ", eta_prime)
+print(f"t_prime: ", t_prime)
