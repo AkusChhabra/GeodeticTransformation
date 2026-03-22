@@ -4,6 +4,7 @@
 #   Tailored towards Australia's method of displaying coordinates in easting-northing
 
 import numpy as np
+import constants
 from newton_raphson import *
 
 ### Inputs
@@ -11,29 +12,10 @@ from newton_raphson import *
 E = 367478.9    # East Grid Coordinate
 N = 8131831.3   # North Grid Coordinate
 
-### Constants
-## Ellipsoid Definition
-
-a = 6378160 # metres [Semi-Major Axis]
-f = 1/298.25 # 1/f [Reciprocal of Flattening]
-
-
-## TM Definition
-E0 = 500000 # metres [false_easting] #500000 # 200000
-N0 = 10000000 # metres [false_northing] #10000000 # 4510193.494
-m0 = 1.000086 # [central meridian scale factor]
-zone_width = 3 # degrees
-Long_central_meridian_zone_1 = 149.00929483056 # degrees
-
-b = a/(1-f) # [Semi-minor axis]
-
-
-epsilon_sqr = f*(2-f)
-n = f/(2-f)
-
+n = constants.n
 
 #A = (a/(1+n))*((n**2)*((n**2)*((n**2)*(25*n**2 + 64) + 256) + 16384))/16384
-A = (a/(1+n))*(1 + (1/4)*n**2 + (1/64)*n**4 + (1/256)*n**6 + (25/16384)*n**8)
+A = (constants.a/(1+n))*(1 + (1/4)*n**2 + (1/64)*n**4 + (1/256)*n**6 + (25/16384)*n**8)
 
 ## Alpha Coefficients
 
@@ -87,8 +69,8 @@ beta = [beta_2, beta_4, beta_6, beta_8, beta_10, beta_12, beta_14, beta_16]
 
 ## Compute Transverse Mercator X, Y coordinates
 
-X = (E - E0)/m0 # East coordinate
-Y = (N - N0)/m0 # North coordinate
+X = (E - constants.E0)/constants.m0 # East coordinate
+Y = (N - constants.N0)/constants.m0 # North coordinate
 
 ## Transverse Mercator (TM) ratios zeta and eta
 
@@ -109,12 +91,12 @@ for k in range(0, 8):
 
 t_prime = np.sin(zeta_prime)/(np.sqrt(np.sinh(eta_prime)**2 + np.cos(zeta_prime)**2))
 
-newton_raphson(f, df, t_prime)
+lat_phi = newton_raphson(t_prime)
 
 
 print(f"\nRectifying Radius, A: ", A)
-print(f"Semi-Minor Axis, b: ", b)
-print(f"eccentricity squared: ", epsilon_sqr)
+print(f"Semi-Minor Axis, b: ", constants.b)
+print(f"eccentricity squared: ", constants.epsilon_sqr)
 print(f"n: ", n)
 print(f"X: ", X)
 print(f"Y: ", Y)
@@ -123,3 +105,4 @@ print(f"eta: ", eta)
 print(f"zeta_prime: ", zeta_prime)
 print(f"eta_prime: ", eta_prime)
 print(f"t_prime: ", t_prime)
+print(f"lat_phi: ", lat_phi)
