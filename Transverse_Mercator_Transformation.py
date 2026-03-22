@@ -91,7 +91,30 @@ for k in range(0, 8):
 
 t_prime = np.sin(zeta_prime)/(np.sqrt(np.sinh(eta_prime)**2 + np.cos(zeta_prime)**2))
 
-lat_phi = newton_raphson(t_prime)
+lat_phi = np.arctan(newton_raphson(t_prime))*180/np.pi
+
+## Compute Long diff omega and long lambda
+
+omega = np.arctan(np.sinh(eta_prime)/np.cos(zeta_prime))
+longitude_lambda = constants.Long_central_meridian_zone_1 + omega 
+
+
+# p and q factors
+
+p, q = 0, 0
+for k in range(0,8):
+    p += 1 + 2*k*alpha[k]*np.cos(2*k*zeta_prime)*np.cosh(2*k*eta_prime)
+    q += -2*k*alpha[k]*np.sin(2*k*zeta_prime)*np.sinh(2*k*eta_prime)
+
+# Point scale factor m
+
+phi_prime = np.arctan(t_prime)
+m = constants.m0*(A/constants.a)*np.sqrt(p**2 + q**2)*((np.sqrt(1 + np.tan(lat_phi)**2)*(np.sqrt(1-constants.epsilon_sqr*np.sin(lat_phi)**2)))/(np.sqrt(np.tan(phi_prime**2) + np.cos(omega))**2))
+
+
+## Grid Convergence, gamma
+
+gamma = np.arctan(np.abs(q/p)) + np.arctan(np.abs(np.tan(phi_prime)*np.tan(omega))/np.sqrt(1 + np.tan(phi_prime)**2))
 
 
 print(f"\nRectifying Radius, A: ", A)
@@ -106,3 +129,9 @@ print(f"zeta_prime: ", zeta_prime)
 print(f"eta_prime: ", eta_prime)
 print(f"t_prime: ", t_prime)
 print(f"lat_phi: ", lat_phi)
+print(f"omega: ", omega)
+print(f"longitude_lambda: ", longitude_lambda)
+print(f"Scalar Factor, p: ", p)
+print(f"Scalar Factor, q: ", q)
+print(f"Point Scale Factor, m: ", m)
+print(f"Grid Convergence, gamma: ", gamma)
