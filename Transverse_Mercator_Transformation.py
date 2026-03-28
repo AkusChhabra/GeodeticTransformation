@@ -9,8 +9,9 @@ from newton_raphson import *
 
 ### Inputs
 
-E = 367478.9    # East Grid Coordinate
-N = 8131831.3   # North Grid Coordinate
+E = 367478.9 # 173137.521  # East Grid Coordinate
+N = 8131831.3 # 8335703.234  # North Grid Coordinate
+zone = 55
 
 n = constants.n
 
@@ -96,7 +97,8 @@ lat_phi = np.arctan(newton_raphson(t_prime))*180/np.pi
 ## Compute Long diff omega and long lambda
 
 omega = np.arctan(np.sinh(eta_prime)/np.cos(zeta_prime))
-longitude_lambda = constants.Long_central_meridian_zone_1 + omega 
+local_central_meridian = zone*constants.zone_width + constants.Long_central_meridian_zone_1 # - constants.zone_width
+longitude_lambda = local_central_meridian +  omega*180/np.pi 
 
 
 # p and q factors
@@ -129,9 +131,11 @@ print(f"zeta_prime: ", zeta_prime)
 print(f"eta_prime: ", eta_prime)
 print(f"t_prime: ", t_prime)
 print(f"lat_phi: ", lat_phi)
+print(f"local_central_meridian: ", local_central_meridian)
 print(f"omega: ", omega)
 print(f"longitude_lambda: ", longitude_lambda)
 print(f"Scalar Factor, p: ", p)
 print(f"Scalar Factor, q: ", q)
 print(f"Point Scale Factor, m: ", m)
 print(f"Grid Convergence, gamma: ", gamma)
+print(f"lat, long: ", lat_phi, longitude_lambda)

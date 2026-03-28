@@ -1,6 +1,6 @@
 import numpy as np
 
-a = 6378160 # metres [Semi-Major Axis]
+a = 6378137.0 # metres [Semi-Major Axis]
 f = 1/298.257222101 # 1/f [Reciprocal of Flattening]
 
 
