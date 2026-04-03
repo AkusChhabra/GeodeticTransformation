@@ -87,6 +87,8 @@ for k in range(0, 8):
     zeta_prime += beta[k]*np.sin(2*k*zeta)*np.cosh(2*k*eta)
     eta_prime += beta[k]*np.cos(2*k*zeta)*np.sinh(2*k*eta)
 
+zeta_prime = float(zeta_prime)
+eta_prime = float(eta_prime)
 
 ## Compute t' = tan(phi')
 
