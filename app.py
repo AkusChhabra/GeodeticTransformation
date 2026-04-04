@@ -37,7 +37,13 @@ def read_file(file_path):
 
 def transform():
     try:
-        main(entry_text.get(), selected_value_grid.get(), selected_value_zone.get())
+        global transformed_data
+        transformed_data = main(entry_text.get(), selected_value_grid.get(), selected_value_zone.get())
+
+        print(transformed_data)
+        for i in range(len(transformed_data)):
+            tree_transformed.insert("", "end", values=transformed_data[i])
+        notebook.select(frame2)
     except ValueError:
         throwError()  
 
@@ -50,9 +56,11 @@ def export_data():
             filetypes=(("Text files", "*.txt"), ("all files", "*.*"))
         )
 
-        if save_path:
+        if save_path and transformed_data:
             with open(save_path, "w") as file:
-                file.write("hello world")
+                for i in range(len(transformed_data)):
+                    line = str(transformed_data[i][0])+ "\t" + str(transformed_data[i][1]) + "\n"
+                    file.write(line)
     except ValueError:
         throwError()
 
@@ -71,12 +79,22 @@ class NewWindow(Toplevel):
 window = tk.Tk()
 window.title("Coordinate Transformer V1.0")
 
+## Set app icon
+  
+ico = Image.open('./assets/earth.png')
+photo = ImageTk.PhotoImage(ico)
+window.wm_iconphoto(False, photo)
+
+## Stylize app
+
 style = ttk.Style(window)
 
 window.tk.call('source', './assets/forest-dark.tcl')
 style.theme_use('forest-dark')
 
-xDim, yDim = 700, 400
+## Dimensions and Menubar
+
+xDim, yDim = 700, 475
 
 menubar = Menu(window)
 about = Menu(menubar, tearoff=0)
@@ -95,6 +113,10 @@ img = ImageTk.PhotoImage(resized)
 notebook = ttk.Notebook(window)
 frame1 = ttk.Frame(notebook)
 frame2 = ttk.Frame(notebook)
+
+frame2.grid_columnconfigure(0, weight=1)
+frame2.grid_rowconfigure(0, weight=1)
+
 notebook.add(frame1, text="Input")
 notebook.add(frame2, text="Output")
 tk.Grid.rowconfigure(window, 0, weight=1)
@@ -178,7 +200,7 @@ for col in cols:
 tree.grid(row=3, column=0, padx=5, pady=5, sticky='nsew')
 
 scroll_coord_tree = ttk.Scrollbar(frame1, orient="vertical", command=tree.yview)
-scroll_coord_tree.place(x=30+200+2, y=140, height=220)
+scroll_coord_tree.place(x=30+200+2, y=140, height=250)
 
 tree.configure(yscrollcommand=scroll_coord_tree.set)
 
@@ -192,16 +214,21 @@ coord_header2 = ["Latitude", "Longitude"]
 file_data = []
 
 cols2 = ("Latitude", "Longitude")
-tree_transformed = ttk.Treeview(frame1, columns=cols2, show='headings')
+tree_transformed = ttk.Treeview(frame2, columns=cols2, show='headings')
 
-for col in cols2:
-    tree_transformed.heading(col, text=col)
-    tree_transformed.column(col, width=100, anchor="center")
+for col2 in cols2:
+    tree_transformed.heading(col2, text=col2)
+    tree_transformed.column(col2, width=100, anchor="center")
 
-tree_transformed.grid(row=3, column=0, padx=5, pady=5, sticky='nsew')
+tree_transformed.grid(row=0, column=0, padx=5, pady=5, sticky='nsew')
+
+scroll_coord_tree_output = ttk.Scrollbar(frame2, orient="vertical", command=tree_transformed.yview)
+scroll_coord_tree_output.place(x=(30+200+25)*2, y=10, height=yDim-83)
+
+tree_transformed.configure(yscrollcommand=scroll_coord_tree_output.set)
 
 
 export_btn = tk.Button(frame2, text="Export", font="Inter", fg="white", bg="#a51890", command=export_data)
-export_btn.pack()
+export_btn.grid(row=0, column=1, padx=50)
 
 window.mainloop()

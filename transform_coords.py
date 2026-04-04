@@ -43,10 +43,12 @@ def check_grid(grid_sys, zone):
 
 def main(file_path, grid_sys, zone):
     filename = file_path.split("/")[-1]
-    file2write = 'Coords_Output.txt'
-    filewrite = open(file2write, 'w')
+    #file2write = 'Coords_Output.txt'
+    #filewrite = open(file2write, 'w')
 
     grid = check_grid(grid_sys, int(zone))
+
+    results= []
 
     with open(filename, 'r') as file:
         for line in file:
@@ -56,7 +58,11 @@ def main(file_path, grid_sys, zone):
                 p = Proj(grid)
                 long, lat = p(x,y,inverse=True)
 
-                filewrite.write(f"{lat}\t{long}")
-                filewrite.write('\n')
+                results.append((lat,long))
+
+                #filewrite.write(f"{lat}\t{long}")
+                #filewrite.write('\n')
             except ValueError:
                 throwError()
+    
+    return results
