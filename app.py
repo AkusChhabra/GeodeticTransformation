@@ -41,7 +41,7 @@ def transform():
     except ValueError:
         throwError()  
 
-def export():
+def export_data():
     try:
         save_path = filedialog.asksaveasfilename(
             initialdir="/",
@@ -49,7 +49,10 @@ def export():
             defaultextension=".txt",
             filetypes=(("Text files", "*.txt"), ("all files", "*.*"))
         )
-        
+
+        if save_path:
+            with open(save_path, "w") as file:
+                file.write("hello world")
     except ValueError:
         throwError()
 
