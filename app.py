@@ -6,27 +6,33 @@ GUI to simplify conversion of MGA94 and GDA2020 grid coordinates to WGS84 geogra
 
 """
 
-import subprocess, os
+import os
 import tkinter as tk
+from subprocess import Popen
 from tkinter import filedialog, Menu, Toplevel
 from tkinter import ttk
 from src.transform_coords import main
 from src.checks import *
 from PIL import Image, ImageTk
 
-def throwError():
-    raise ValueError("An error has occurred.")
-
 def upload_file():
     try:
         global file_path
         file_path = filedialog.askopenfilename(title="Select a File", filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
         compute_btn.config(state="normal")
-        entry_text.set(file_path)
+
+        tree.grid(row=3, column=0, padx=5, pady=5, sticky='nsew')
+        scroll_coord_tree.place(x=30+200+2, y=140, height=250)
+
+        try:        
+            entry_text.set(file_path)
+            fileUploadedDialogBox()
+        except Exception:
+            fileUploadFailDialogBox()
+
         read_file(file_path)
-    except ValueError:
+    except Exception:
         noFileFoundDialogBox()
-        throwError()  
 
 def read_file(file_path):
     try:
@@ -36,22 +42,22 @@ def read_file(file_path):
                 file_data= (line[0].rstrip(), line[1].rstrip())
                 tree.insert("", "end", values=file_data)
     except ValueError:
-        return
+        throwError()
 
 def transform():
     try:
         global transformed_data
         transformed_data = main(entry_text.get(), selected_value_grid.get(), selected_value_zone.get())
 
-        print(transformed_data)
         for i in range(len(transformed_data)):
             tree_transformed.insert("", "end", values=transformed_data[i])
         notebook.select(frame2)
-    except ValueError:
+    except Exception:
         throwError()  
 
 def export_data():
     try:
+        global save_path
         save_path = filedialog.asksaveasfilename(
             initialdir="/",
             title="Save File",
@@ -61,20 +67,34 @@ def export_data():
 
         if save_path and transformed_data:
             with open(save_path, "w") as file:
+                file.write("LATITUDE\tLONGITUDE\n")
                 for i in range(len(transformed_data)):
                     line = str(transformed_data[i][0])+ "\t" + str(transformed_data[i][1]) + "\n"
                     file.write(line)
-            open_file(file_path)
+            ask_open_file()
     except ValueError:
         throwError()
 
-def open_file(file_path):
-    try:
+def open_file():
         installation_path = check_notepad_plus_plus()
         if installation_path:
-            subprocess.Popen(["C:/Program Files/Notepad++/notepad++.exe", file_path])
+            Popen(["C:/Program Files/Notepad++/notepad++.exe", save_path])
         else:
-            subprocess.Popen(["notepad.exe", file_path])
+            Popen(["notepad.exe", save_path])
+
+def ask_open_file():
+    try:
+        # Ask to open file
+        open_file_dialog_window = tk.Toplevel(window)
+        open_file_dialog_window.title("Open File")
+        open_file_dialog_window.geometry("250x150")
+        open_file_dialog_window.iconbitmap("./assets/earth.ico")
+        
+        tk.Label(open_file_dialog_window, 
+                 text="\nWould you like to open the saved file?").pack()
+        tk.Button(open_file_dialog_window, text="Yes", command=lambda: (open_file(), open_file_dialog_window.destroy())).pack(side="left", padx=50)
+        tk.Button(open_file_dialog_window, text="No", command=open_file_dialog_window.destroy).pack(side="left", padx=20)
+
     except ValueError:
         throwError()
 
@@ -88,12 +108,12 @@ def check_notepad_plus_plus():
             return path
     return None
 
-
 class NewWindow(Toplevel):
     def __init__(self, window=None):
         super().__init__(window)
         self.title("About")
         self.geometry("250x150")
+        self.iconbitmap("./assets/earth.ico")
 
         tk.Label(self, 
                 text="Made by Akus Chhabra. \n\nTransform MGA94 and GDA2020 grid\ncoordinates into WGS84 \ngeographic coordinates.").pack()
@@ -222,11 +242,7 @@ for col in cols:
     tree.heading(col, text=col)
     tree.column(col, width=100, anchor="center")
 
-tree.grid(row=3, column=0, padx=5, pady=5, sticky='nsew')
-
 scroll_coord_tree = ttk.Scrollbar(frame1, orient="vertical", command=tree.yview)
-scroll_coord_tree.place(x=30+200+2, y=140, height=250)
-
 tree.configure(yscrollcommand=scroll_coord_tree.set)
 
 
