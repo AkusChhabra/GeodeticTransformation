@@ -6,10 +6,12 @@ GUI to simplify conversion of MGA94 and GDA2020 grid coordinates to WGS84 geogra
 
 """
 
+import subprocess, os
 import tkinter as tk
 from tkinter import filedialog, Menu, Toplevel
 from tkinter import ttk
-from transform_coords import main
+from src.transform_coords import main
+from src.checks import *
 from PIL import Image, ImageTk
 
 def throwError():
@@ -23,6 +25,7 @@ def upload_file():
         entry_text.set(file_path)
         read_file(file_path)
     except ValueError:
+        noFileFoundDialogBox()
         throwError()  
 
 def read_file(file_path):
@@ -61,8 +64,30 @@ def export_data():
                 for i in range(len(transformed_data)):
                     line = str(transformed_data[i][0])+ "\t" + str(transformed_data[i][1]) + "\n"
                     file.write(line)
+            open_file(file_path)
     except ValueError:
         throwError()
+
+def open_file(file_path):
+    try:
+        installation_path = check_notepad_plus_plus()
+        if installation_path:
+            subprocess.Popen(["C:/Program Files/Notepad++/notepad++.exe", file_path])
+        else:
+            subprocess.Popen(["notepad.exe", file_path])
+    except ValueError:
+        throwError()
+
+def check_notepad_plus_plus():
+    paths = [
+        r"C:\Program Files\Notepad++\notepad++.exe",
+        r"C:\Program Files (x86)\Notepad++\notepad++.exe"
+    ]
+    for path in paths:
+        if os.path.exists(path):
+            return path
+    return None
+
 
 class NewWindow(Toplevel):
     def __init__(self, window=None):
