@@ -17,13 +17,13 @@ a = Analysis(
 pyz = PYZ(a.pure)
 
 exe = EXE(
-	icon='C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\earth.ico',
     pyz,
     a.scripts,
     a.binaries,
     a.datas,
     [],
-    name='app',
+    name='CoordShift',
+	icon='C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\earth.ico',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
