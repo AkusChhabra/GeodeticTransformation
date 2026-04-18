@@ -15,3 +15,5 @@ corresponding Easting and Northing data.
 | V1.0.0             |                               |
 | ------------------ | ----------------------------- |
 | [CoordShift.exe]() | Windows x64 Version Installer |
+
+a.datas += [('assets/earth.ico', 'assets/earth.png', 'DATA')]

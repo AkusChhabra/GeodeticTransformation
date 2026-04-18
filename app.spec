@@ -3,9 +3,9 @@
 
 a = Analysis(
     ['app.py'],
-    pathex=[],
+    pathex=['C:\\Users\\akusc\\Projects\\GeodeticTransformation'],
     binaries=[],
-    datas=[],
+    datas=[('C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\*', 'assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -30,7 +30,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

@@ -6,7 +6,7 @@ GUI to simplify conversion of MGA94 and GDA2020 grid coordinates to WGS84 geogra
 
 """
 
-import os
+import os, sys
 import tkinter as tk
 from subprocess import Popen
 from tkinter import filedialog, Menu, Toplevel
@@ -14,6 +14,11 @@ from tkinter import ttk
 from src.transform_coords import main
 from src.checks import *
 from PIL import Image, ImageTk
+
+#def resource_path(relative_path):
+#    if hasattr(sys, '_MEIPASS'):
+#        return os.path.join(sys._MEIPASS, relative_path)
+#    return os.path.join(os.path.abspath("."), relative_path)
 
 def upload_file():
     try:
@@ -26,11 +31,11 @@ def upload_file():
 
         try:        
             entry_text.set(file_path)
-            fileUploadedDialogBox()
         except Exception:
             fileUploadFailDialogBox()
 
         read_file(file_path)
+
     except Exception:
         noFileFoundDialogBox()
 
@@ -41,6 +46,7 @@ def read_file(file_path):
                 line = line.split("\t")
                 file_data= (line[0].rstrip(), line[1].rstrip())
                 tree.insert("", "end", values=file_data)
+        fileUploadedDialogBox()
     except ValueError:
         throwError()
 
@@ -88,7 +94,7 @@ def ask_open_file():
         open_file_dialog_window = tk.Toplevel(window)
         open_file_dialog_window.title("Open File")
         open_file_dialog_window.geometry("250x150")
-        open_file_dialog_window.iconbitmap("./assets/earth.ico")
+        open_file_dialog_window.iconbitmap("C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\earth.ico")
         
         tk.Label(open_file_dialog_window, 
                  text="\nWould you like to open the saved file?").pack()
@@ -113,11 +119,11 @@ class NewWindow(Toplevel):
         super().__init__(window)
         self.title("About")
         self.geometry("250x150")
-        self.iconbitmap("./assets/earth.ico")
+        self.iconbitmap("C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\earth.ico")
 
         tk.Label(self, 
                 text="Made by Akus Chhabra. \n\nTransform MGA94 and GDA2020 grid\ncoordinates into WGS84 \ngeographic coordinates.").pack()
-   
+
 
 ## Initialize window
 
@@ -126,7 +132,7 @@ window.title("Coordinate Transformer V1.0")
 
 ## Set app icon
   
-ico = Image.open('./assets/earth.png')
+ico = Image.open('C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\earth.png')
 photo = ImageTk.PhotoImage(ico)
 window.wm_iconphoto(False, photo)
 
@@ -134,7 +140,7 @@ window.wm_iconphoto(False, photo)
 
 style = ttk.Style(window)
 
-window.tk.call('source', './assets/forest-dark.tcl')
+window.tk.call('source', 'C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\forest-dark.tcl')
 style.theme_use('forest-dark')
 
 ## Dimensions and Menubar
@@ -150,7 +156,7 @@ menubar.add_cascade(label="File", menu=file)
 file.add_command(label="Exit", command=window.quit)
 window.config(menu=menubar)
 
-original = Image.open("./assets/Skywise_Gradient.png")
+original = Image.open("C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\Skywise_Gradient.png")
 resized = original.resize((xDim, yDim))
 img = ImageTk.PhotoImage(resized)
 
