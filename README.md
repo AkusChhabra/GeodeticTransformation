@@ -12,8 +12,6 @@ Using EPSG's API via Pyproj, the coordinate transformation was computed under th
 input parameters. Inputs required to run this program include the grid coordinate system, zone of analysis and the
 corresponding Easting and Northing data.
 
-| V1.0.0             |                               |
-| ------------------ | ----------------------------- |
-| [CoordShift.exe]() | Windows x64 Version Installer |
-
-a.datas += [('assets/earth.ico', 'assets/earth.png', 'DATA')]
+| V1.0.0                                                                                                |                               |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------- |
+| [CoordShift.exe](https://github.com/AkusChhabra/GeodeticTransformation/tree/main/dist/CoordShift.exe) | Windows x64 Version Installer |
