@@ -5,7 +5,7 @@ a = Analysis(
     ['app.py'],
     pathex=['C:\\Users\\akusc\\Projects\\GeodeticTransformation'],
     binaries=[],
-    datas=[('C:\\Users\\akusc\\Projects\\GeodeticTransformation\\assets\\*', 'assets')],
+    datas=[('assets', 'assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
