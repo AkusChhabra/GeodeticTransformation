@@ -2,7 +2,7 @@
 Transform Coords V1.0
 Made by A.Chhabra
 
-Convert any MGA94/GDA2020 grid coordinate into WGS84 geographic coordinate. Applicable for most Australian airports that supply an AD Survey/AOC.
+Convert any MGA94 grid coordinate into WGS84 geographic coordinate. Applicable for most Australian airports that supply an AD Survey/AOC.
 
 Script uses EPSG API to convert.
 
@@ -35,8 +35,8 @@ def check_grid(grid_sys, zone):
     ## Check type of grid system and use corresponding ESPG value
     if grid_sys == "MGA94" and zone >= 48 and zone <= 58:
         grid = "EPSG:283" + str(zone)
-    elif grid_sys == "GDA2020" and zone >= 48 and zone <= 58:
-        grid = "EPSG:78" + str(zone)
+    #elif grid_sys == "GDA2020" and zone >= 48 and zone <= 58:
+    #    grid = "EPSG:78" + str(zone)
     else:
         throwError()
     return grid

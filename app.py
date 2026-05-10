@@ -2,7 +2,7 @@
 Transform Coords GUI V1.0
 Made by A.Chhabra
 
-GUI to simplify conversion of MGA94 and GDA2020 grid coordinates to WGS84 geographical coordinates
+GUI to simplify conversion of MGA94 grid coordinates to WGS84 geographical coordinates
 
 """
 
@@ -58,6 +58,7 @@ def transform():
         for i in range(len(transformed_data)):
             tree_transformed.insert("", "end", values=transformed_data[i])
         notebook.select(frame2)
+        notebook.tab(0, state="disabled")
     except Exception:
         throwError()  
 
@@ -114,6 +115,14 @@ def check_notepad_plus_plus():
             return path
     return None
 
+def reset_calc():
+    tree.delete(*tree.get_children())
+    tree_transformed.delete(*tree_transformed.get_children())
+    notebook.tab(0, state="normal")
+    compute_btn.config(state="disabled")
+    notebook.select(frame1)
+    entry_text.set("Please upload a file.")
+
 class NewWindow(Toplevel):
     def __init__(self, window=None):
         super().__init__(window)
@@ -122,7 +131,7 @@ class NewWindow(Toplevel):
         self.iconbitmap(os.path.join(os.path.dirname(__file__), "./assets/earth.ico"))
 
         tk.Label(self, 
-                text="Made by Akus Chhabra. \n\nTransform MGA94 and GDA2020 grid\ncoordinates into WGS84 \ngeographic coordinates.").pack()
+                text="Made by Akus Chhabra. \n\nTransform MGA94 grid\ncoordinates into WGS84 \ngeographic coordinates.").pack()
 
 
 ## Initialize window
@@ -195,7 +204,7 @@ ent1.grid(row=2, column=3)
 label_grid = tk.Label(frame1, text="Select Grid Coordinate System:", font="Inter", fg="white", bg="#011133")
 label_grid.grid(row=0, column=0, padx=5, pady=5)
 
-grid_opts = ["MGA94", "GDA2020"]
+grid_opts = ["MGA94"]
 selected_value_grid = tk.StringVar(frame1)
 selected_value_grid.set(grid_opts[0])
 
@@ -270,12 +279,15 @@ for col2 in cols2:
 tree_transformed.grid(row=0, column=0, padx=5, pady=5, sticky='nsew')
 
 scroll_coord_tree_output = ttk.Scrollbar(frame2, orient="vertical", command=tree_transformed.yview)
-scroll_coord_tree_output.place(x=(30+200+25)*2, y=10, height=yDim-83)
+scroll_coord_tree_output.place(x=(30+200+8)*2, y=10, height=yDim-83)
 
 tree_transformed.configure(yscrollcommand=scroll_coord_tree_output.set)
 
-
 export_btn = tk.Button(frame2, text="Export", font="Inter", fg="white", bg="#a51890", command=export_data)
-export_btn.grid(row=0, column=1, padx=50)
+export_btn.grid(row=0, column=1, padx=20)
+
+
+reset_btn = tk.Button(frame2, text="Reset", font="Inter", fg="white", bg="#FF0000", command=reset_calc)
+reset_btn.grid(row=0, column=2, padx=20)
 
 window.mainloop()
